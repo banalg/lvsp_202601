@@ -1,16 +1,16 @@
 {
-  "name": "Audio Player v1",
-  "short_name": "AudioPlayer",
-  "description": "Lecteur audio pour les sons de la pièce de théâtre",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#3b82f6",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    "name": "Soundboard Théâtre",
+    "short_name": "SonsLVSP",
+    "description": "Régie son mobile pour répétitions",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }

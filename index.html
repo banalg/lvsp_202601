@@ -7,7 +7,7 @@
     <title>Sons LVSP</title>
     <link rel="stylesheet" href="index.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="icon" type="image/png" href="icons/android/mipmap-xxxhdpi/ic_launcher.png">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,6 +20,13 @@
         <h1>Régie Sons LVSP</h1>
         <div class="status-info">
             <span id="conn-status">Vérification réseau...</span>
+            <span id="app-version">v1.0.2</span>
+        </div>
+        <div class="status-info" style="margin-top: 0.5rem; font-size: 0.7rem;">
+            <span id="last-update">Dernier rafraîchissement : --/--</span>
+            <span id="update-btn" onclick="forceUpdate()"
+                style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--accent); margin-left: 1rem;">Rafraîchir
+                l'app</span>
         </div>
     </header>
 

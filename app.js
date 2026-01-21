@@ -1,3 +1,6 @@
+// Version de l'application
+const APP_VERSION = "v1.0.2";
+
 // Use playlistData from playlist.js, adding the folder prefix
 const audioFiles = playlistData.map(item => ({
     ...item,
@@ -8,6 +11,15 @@ let currentAudio = null;
 let currentTile = null;
 
 const soundboard = document.getElementById('soundboard');
+
+// Display version
+document.getElementById('app-version').innerText = APP_VERSION;
+
+// Display last update time
+const lastUpdate = localStorage.getItem('last-soundboard-update');
+if (lastUpdate) {
+    document.getElementById('last-update').innerText = `Dernier rafraîchissement : ${lastUpdate}`;
+}
 
 // Generate sound tiles
 audioFiles.forEach((file, index) => {
@@ -41,13 +53,11 @@ function formatTime(seconds) {
 async function toggleSound(index, tile) {
     const file = audioFiles[index];
 
-    // If clicking same tile that is playing -> Stop it
     if (currentAudio && currentAudio.src.endsWith(encodeURI(file.path))) {
         stopAll();
         return;
     }
 
-    // New sound: stop current and play new
     stopAll();
 
     currentAudio = new Audio(file.path);
@@ -108,12 +118,39 @@ async function updateCacheProgress() {
     if (msg) {
         if (progress >= 100) {
             msg.innerText = "Mode hors-ligne prêt !";
+            if (!localStorage.getItem('last-soundboard-update')) {
+                setLastUpdateDate();
+            }
             setTimeout(() => {
                 if (ui) ui.classList.add('cache-hidden');
             }, 3000);
         } else {
             msg.innerText = `Mise en cache : ${Math.round(progress)}%`;
         }
+    }
+}
+
+function setLastUpdateDate() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    localStorage.setItem('last-soundboard-update', dateStr);
+    document.getElementById('last-update').innerText = `Dernier rafraîchissement : ${dateStr}`;
+}
+
+async function forceUpdate() {
+    if (confirm("Voulez-vous forcer la mise à jour des sons ? (Nécessite une connexion Internet)")) {
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let registration of registrations) {
+                await registration.unregister();
+            }
+        }
+        const cacheNames = await caches.keys();
+        for (let name of cacheNames) {
+            await caches.delete(name);
+        }
+        localStorage.removeItem('last-soundboard-update');
+        window.location.reload(true);
     }
 }
 

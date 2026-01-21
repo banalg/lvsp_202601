@@ -1,5 +1,5 @@
 // Version de l'application
-const APP_VERSION = "v1.0.4";
+const APP_VERSION = "v1.0.5";
 
 // Use playlistData from playlist.js, adding the folder prefix
 const audioFiles = playlistData.map(item => ({

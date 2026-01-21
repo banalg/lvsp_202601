@@ -1,5 +1,5 @@
 // Version de l'application
-const APP_VERSION = "v1.0.5";
+const APP_VERSION = "v1.0.8";
 
 // Use playlistData from playlist.js, adding the folder prefix
 const audioFiles = playlistData.map(item => ({
@@ -25,7 +25,11 @@ if (lastUpdate) {
 audioFiles.forEach((file, index) => {
     const tile = document.createElement('div');
     tile.className = 'sound-tile';
+    tile.id = `tile-${index}`;
     tile.innerHTML = `
+        <div class="offline-indicator" title="Indisponible hors-ligne">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2v-2zm0-10h2v8h-2V6z"/></svg>
+        </div>
         <div class="sound-number">${file.id}</div>
         <div class="sound-name">${file.label}</div>
         <div class="sound-duration" id="dur-${index}">--:--</div>
@@ -46,7 +50,24 @@ audioFiles.forEach((file, index) => {
             durationDisplay.innerText = formatTime(tempAudio.duration);
         }
     });
+
+    // Check if specifically this sound is in cache
+    checkTileCache(index);
 });
+
+async function checkTileCache(index) {
+    if (!('caches' in window)) return;
+    const cache = await caches.open('audio-cache-v1');
+    const matched = await cache.match(audioFiles[index].path);
+    const tile = document.getElementById(`tile-${index}`);
+    const indicator = tile.querySelector('.offline-indicator');
+
+    if (matched) {
+        tile.classList.add('is-cached');
+        indicator.title = "Disponible hors-ligne";
+        indicator.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+    }
+}
 
 function formatTime(seconds) {
     const isNegative = seconds < 0;
@@ -115,10 +136,96 @@ function stopAll() {
     currentTile = null;
 }
 
+// Download All Feature
+async function downloadAllSounds() {
+    const btn = document.getElementById('download-btn');
+    const originalText = btn.innerText;
+
+    try {
+        btn.innerText = "Préparation du ZIP...";
+        btn.style.pointerEvents = "none";
+        btn.style.opacity = "0.5";
+
+        const zip = new JSZip();
+
+        for (let i = 0; i < audioFiles.length; i++) {
+            const file = audioFiles[i];
+            btn.innerText = `Traitement ${i + 1}/${audioFiles.length}...`;
+
+            const response = await fetch(file.path);
+            const arrayBuffer = await response.arrayBuffer();
+
+            const writer = new ID3Writer(arrayBuffer);
+            writer.setFrame('TIT2', file.label);
+            writer.addTag();
+            const taggedBuffer = writer.arrayBuffer;
+
+            const cleanName = `${file.id} - ${file.label}.mp3`.replace(/[\\/:*?"<>|]/g, '_');
+            zip.file(cleanName, taggedBuffer);
+        }
+
+        btn.innerText = "Compression du ZIP...";
+        const content = await zip.generateAsync({ type: "blob" });
+
+        const url = window.URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `LVSP_2026_Sons.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        btn.innerText = "Téléchargement lancé !";
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.pointerEvents = "auto";
+            btn.style.opacity = "1";
+        }, 3000);
+
+    } catch (error) {
+        console.error(error);
+        alert("Erreur lors du téléchargement : " + error.message);
+        btn.innerText = originalText;
+        btn.style.pointerEvents = "auto";
+        btn.style.opacity = "1";
+    }
+}
+
 // PWA & Networking
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-        .then(() => setInterval(updateCacheProgress, 1000));
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => {
+                console.log('SW Registered');
+
+                // Check for updates every 5 minutes
+                setInterval(() => {
+                    reg.update();
+                }, 1000 * 60 * 5);
+
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // New update found and installed
+                                showUpdateNotification();
+                            }
+                        }
+                    };
+                };
+
+                setInterval(updateCacheProgress, 1000);
+            })
+            .catch(err => console.log('SW Error', err));
+    });
+}
+
+function showUpdateNotification() {
+    if (confirm("Une nouvelle version de l'application ou des sons est disponible. Voulez-vous mettre à jour maintenant ?")) {
+        window.location.reload();
+    }
 }
 
 async function updateCacheProgress() {
@@ -133,17 +240,19 @@ async function updateCacheProgress() {
     const ui = document.getElementById('cache-ui');
 
     if (fill) fill.style.width = `${progress}%`;
+
+    audioFiles.forEach((_, idx) => checkTileCache(idx));
+
     if (msg) {
         if (progress >= 100) {
             msg.innerText = "Mode hors-ligne prêt !";
-            if (!localStorage.getItem('last-soundboard-update')) {
-                setLastUpdateDate();
-            }
+            setLastUpdateDate();
             setTimeout(() => {
                 if (ui) ui.classList.add('cache-hidden');
             }, 3000);
         } else {
             msg.innerText = `Mise en cache : ${Math.round(progress)}%`;
+            if (ui) ui.classList.remove('cache-hidden');
         }
     }
 }

@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icons/playstore.png">
+    <!-- Libraries for Download All feature -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@4.4.0/dist/browser-id3-writer.min.js"></script>
 </head>
 
 <body>
@@ -21,13 +24,16 @@
         <h1>LVSP 2026</h1>
         <div class="status-info">
             <span id="conn-status">Vérification réseau...</span>
-            <span id="app-version">v1.0.5</span>
+            <span id="app-version">v1.0.8</span>
         </div>
         <div class="status-info" style="margin-top: 0.5rem; font-size: 0.7rem;">
             <span id="last-update">Dernier rafraîchissement : --/--</span>
             <span id="update-btn" onclick="forceUpdate()"
                 style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--accent); margin-left: 1rem;">Rafraîchir
                 l'app</span>
+            <span id="download-btn" onclick="downloadAllSounds()"
+                style="cursor:pointer; text-decoration:underline; font-weight:600; color:var(--accent); margin-left: 1rem;">Télécharger
+                tout (ZIP)</span>
         </div>
     </header>
 

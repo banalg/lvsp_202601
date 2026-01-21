@@ -104,6 +104,27 @@ h1 {
     font-variant-numeric: tabular-nums;
 }
 
+.time-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto;
+    padding: 0 0.5rem;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.sound-tile.playing .time-container {
+    opacity: 1;
+}
+
+.sound-tile.playing .sound-duration {
+    display: none;
+}
+
 .progress-ring {
     position: absolute;
     bottom: 0;

@@ -1,5 +1,5 @@
 // Version de l'application
-const APP_VERSION = "v1.0.3";
+const APP_VERSION = "v1.0.4";
 
 // Use playlistData from playlist.js, adding the folder prefix
 const audioFiles = playlistData.map(item => ({
@@ -29,6 +29,10 @@ audioFiles.forEach((file, index) => {
         <div class="sound-number">${file.id}</div>
         <div class="sound-name">${file.label}</div>
         <div class="sound-duration" id="dur-${index}">--:--</div>
+        <div class="time-container">
+            <span class="elapsed-time" id="elapsed-${index}">0:00</span>
+            <span class="remaining-time" id="remaining-${index}">-0:00</span>
+        </div>
         <div class="progress-ring"></div>
     `;
     tile.onclick = () => toggleSound(index, tile);
@@ -45,9 +49,11 @@ audioFiles.forEach((file, index) => {
 });
 
 function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = Math.floor(seconds % 60);
-    return `${min}:${sec.toString().padStart(2, '0')}`;
+    const isNegative = seconds < 0;
+    const absSeconds = Math.abs(seconds);
+    const min = Math.floor(absSeconds / 60);
+    const sec = Math.floor(absSeconds % 60);
+    return (isNegative ? "-" : "") + `${min}:${sec.toString().padStart(2, '0')}`;
 }
 
 async function toggleSound(index, tile) {
@@ -65,12 +71,19 @@ async function toggleSound(index, tile) {
 
     tile.classList.add('playing');
     const progressBar = tile.querySelector('.progress-ring');
+    const elapsedDisplay = document.getElementById(`elapsed-${index}`);
+    const remainingDisplay = document.getElementById(`remaining-${index}`);
 
     currentAudio.play();
 
     currentAudio.ontimeupdate = () => {
-        const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+        const elapsed = currentAudio.currentTime;
+        const remaining = currentAudio.duration - elapsed;
+        const progress = (elapsed / currentAudio.duration) * 100;
+
         if (progressBar) progressBar.style.width = `${progress}%`;
+        if (elapsedDisplay) elapsedDisplay.innerText = formatTime(elapsed);
+        if (remainingDisplay) remainingDisplay.innerText = formatTime(-remaining);
     };
 
     currentAudio.onended = () => {
@@ -89,10 +102,15 @@ function stopAll() {
         currentAudio.currentTime = 0;
         currentAudio = null;
     }
-    document.querySelectorAll('.sound-tile').forEach(t => {
+    document.querySelectorAll('.sound-tile').forEach((t, idx) => {
         t.classList.remove('playing');
         const p = t.querySelector('.progress-ring');
         if (p) p.style.width = '0%';
+
+        const elapsedDisplay = document.getElementById(`elapsed-${idx}`);
+        const remainingDisplay = document.getElementById(`remaining-${idx}`);
+        if (elapsedDisplay) elapsedDisplay.innerText = "0:00";
+        if (remainingDisplay) remainingDisplay.innerText = "-0:00";
     });
     currentTile = null;
 }
@@ -134,7 +152,8 @@ function setLastUpdateDate() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
     localStorage.setItem('last-soundboard-update', dateStr);
-    document.getElementById('last-update').innerText = `Dernier rafraîchissement : ${dateStr}`;
+    const lastUpdateDisplay = document.getElementById('last-update');
+    if (lastUpdateDisplay) lastUpdateDisplay.innerText = `Dernier rafraîchissement : ${dateStr}`;
 }
 
 async function forceUpdate() {

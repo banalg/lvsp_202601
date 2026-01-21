@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player - Mode Hors-ligne</title>
+    <meta name="description" content="Lecteur audio de théâtre avec support hors-ligne">
+    <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#3b82f6">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lecteur Audio LVSP</h1>
+            <p class="subtitle">Sons pour la pièce de théâtre</p>
+            <div id="network-status" class="status-badge">Vérification...</div>
+        </header>
+
+        <main id="audio-list" class="audio-list">
+            <!-- Audio cards will be injected here by app.js -->
+        </main>
+    </div>
+
+    <div id="cache-status-container" class="cache-status">
+        <h4>Préparation du mode hors-ligne</h4>
+        <p id="cache-text" style="font-size: 0.8rem; margin-bottom: 0.5rem; color: var(--text-muted);">Mise en cache des fichiers audio...</p>
+        <div class="cache-progress">
+            <div id="cache-fill" class="cache-progress-fill"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

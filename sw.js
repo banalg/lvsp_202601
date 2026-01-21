@@ -4,6 +4,7 @@ const ASSETS_TO_CACHE = [
     'index.html',
     'index.css',
     'app.js',
+    'playlist.js',
     'manifest.json',
     'icon.png',
     '00_sons/01_01_00_Au_Theatre_ce_Soir_generique-dailymotion-x2sef7f-http-480-5.mp3',

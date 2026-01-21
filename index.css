@@ -92,9 +92,16 @@ h1 {
     font-weight: 500;
     line-height: 1.2;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.sound-duration {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
 }
 
 .progress-ring {

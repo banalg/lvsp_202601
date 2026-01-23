@@ -4,7 +4,7 @@ const playlistData = [
   { "id": "01.02", "file": "01_02_01_Le grand méchant loup (Les 3 petits cochons - en chanson) - Lucienne Vernay.mp3", "label": "Chanson Loup" },
   { "id": "01.02b", "file": "01_02_02_Scène_de_crime_et_vidéo_générée.mp3", "label": "Cri + Sifflets" },
   { "id": "01.02c", "file": "01_02_02_Scène_de_crime_et_vidéo_générée_v2.mp3", "label": "Cri + Sifflets (v2)" },
-  { "id": "01_03_00", "file": "01_03_00 tempête.mp3", "label": "Tempête" },
+  { "id": "01.03", "file": "01_03_00 tempête.mp3", "label": "Tempête" },
   { "id": "02.01", "file": "02_01_00_Arrivée de Mollie (radio).mp3", "label": "Entrée Mollie (Radio)" },
   { "id": "02.02", "file": "02_02_00_Arrivée de Gilles.mp3", "label": "Entrée Gilles" },
   { "id": "02.04", "file": "02_04_00_ MOLLIE  et GILES flash actu radio pièce p 5_v2.mp3", "label": "Flash Radio p.5" },

@@ -13,7 +13,7 @@ const ASSETS_TO_CACHE = [
     '00_sons/01_02_01_Le grand méchant loup (Les 3 petits cochons - en chanson) - Lucienne Vernay.mp3',
     '00_sons/01_02_02_Scène_de_crime_et_vidéo_générée.mp3',
     '00_sons/01_02_02_Scène_de_crime_et_vidéo_générée_v2.mp3',
-    '00_sons/01_03 tempête.mp3',
+    '00_sons/01_03_00 tempête.mp3',
     '00_sons/02_01_00_Arrivée de Mollie (radio).mp3',
     '00_sons/02_02_00_Arrivée de Gilles.mp3',
     '00_sons/02_04_00_ MOLLIE  et GILES flash actu radio pièce p 5_v2.mp3',

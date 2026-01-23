@@ -1,0 +1,3 @@
+﻿;FFMETADATA1
+title=Test
+artist=LVSP
